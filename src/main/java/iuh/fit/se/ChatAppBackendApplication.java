@@ -1,4 +1,4 @@
-package fit.iuh.se.ChatAppBackend;
+package iuh.fit.se;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
