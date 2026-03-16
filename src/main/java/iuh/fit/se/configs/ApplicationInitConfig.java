@@ -1,8 +1,8 @@
 package iuh.fit.se.configs;
 
 import iuh.fit.se.entities.AccountCredential;
-import iuh.fit.se.entities.Employee;
 import iuh.fit.se.entities.Role;
+import iuh.fit.se.entities.User;
 import iuh.fit.se.entities.enums.AccountType;
 import iuh.fit.se.entities.enums.UserRole;
 import iuh.fit.se.repositories.AccountCredentialRepository;
@@ -49,17 +49,20 @@ public class ApplicationInitConfig {
                 Set<Role> roles = new HashSet<>();
                 roles.add(adminRole);
 
-                Employee employee = Employee.builder()
+                // Sử dụng User thay vì Employee
+                User adminUser = User.builder()
                         .roles(roles)
+                        .firstName("Admin")
+                        .lastName("System")
                         .build();
 
-                userRepository.save(employee);
+                userRepository.save(adminUser);
 
                 AccountCredential accountCredential = AccountCredential.builder()
                         .credential(adminUserName)
                         .password(passwordEncoder.encode(adminPassword))
                         .type(AccountType.USERNAME)
-                        .user(employee)
+                        .user(adminUser)
                         .isVerified(true)
                         .build();
                 accountCredentialRepository.save(accountCredential);

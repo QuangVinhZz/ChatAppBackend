@@ -15,9 +15,8 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.JOINED)
 @SuperBuilder
-public abstract class User {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

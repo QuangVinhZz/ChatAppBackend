@@ -23,6 +23,8 @@ public class SecurityConfig {
 
     private final String[] POST_PUBLIC_ENDPOINT = {
             "/auth-management/api/v1/auth/log-in",
+            "/auth-management/api/v1/auth/refresh",
+            "/auth-management/api/v1/auth/logout"
     };
 
     @Bean

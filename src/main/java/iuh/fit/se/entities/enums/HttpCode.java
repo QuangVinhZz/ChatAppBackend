@@ -18,8 +18,6 @@ public enum HttpCode {
     NOT_FOUND(404, "Not found!", HttpStatus.NOT_FOUND),
     EMAIL_NOT_FOUND(404, "Email not found!", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(404, "User not found!", HttpStatus.NOT_FOUND),
-    EMPLOYEE_NOT_FOUND(404, "Employee not found!", HttpStatus.NOT_FOUND),
-    CUSTOMER_NOT_FOUND(404, "Customer not found!", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(404, "Role not found!", HttpStatus.NOT_FOUND),
     ACCOUNT_NOT_FOUND(404, "Account not found!", HttpStatus.NOT_FOUND),
     USERNAME_EXISTED(409, "Username existed!", HttpStatus.CONFLICT),
