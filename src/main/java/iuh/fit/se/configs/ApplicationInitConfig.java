@@ -22,12 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 21/11/2025, Friday
- **/
-
 @Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

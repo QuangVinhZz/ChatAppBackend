@@ -13,12 +13,6 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 21/11/2025, Friday
- **/
-
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

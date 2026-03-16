@@ -7,11 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 20/11/2025, Thursday
- **/
 @NoArgsConstructor
 @Getter
 @Setter

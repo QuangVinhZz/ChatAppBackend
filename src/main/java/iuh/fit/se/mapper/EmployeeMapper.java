@@ -7,11 +7,6 @@ import iuh.fit.se.dtos.response.EmployeeUpdateResponse;
 import iuh.fit.se.entities.Employee;
 import org.mapstruct.*;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 28/11/2025, Friday
- **/
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

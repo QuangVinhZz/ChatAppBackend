@@ -4,12 +4,6 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 19/11/2025, Wednesday
- **/
-
 @Getter
 public enum HttpCode {
     OK(200, "Successfully!", HttpStatus.OK),

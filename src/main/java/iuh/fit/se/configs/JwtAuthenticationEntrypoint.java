@@ -13,11 +13,6 @@ import tools.jackson.databind.ObjectMapper;
 import java.awt.*;
 import java.io.IOException;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 20/11/2025, Thursday
- **/
 public class JwtAuthenticationEntrypoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

@@ -6,11 +6,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 21/11/2025, Friday
- **/
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

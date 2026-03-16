@@ -9,12 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 20/11/2025, Thursday
- **/
-
 @Repository
 public interface AccountCredentialRepository extends JpaRepository<AccountCredential, String> {
     AccountCredential findByCredential(String identifier);

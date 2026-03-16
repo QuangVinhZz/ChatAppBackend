@@ -20,11 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-/**
- * @author : user664dntp
- * @mailto : phatdang19052004@gmail.com
- * @created : 19/11/2025, Wednesday
- **/
 @RestController
 @RequestMapping("auth-management/api/v1/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
