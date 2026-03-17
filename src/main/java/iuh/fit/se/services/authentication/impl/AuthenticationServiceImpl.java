@@ -152,4 +152,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user.getRoles().forEach(role -> roles.add(role.getName()));
         return roles.toString();
     }
+
+    @Override
+    public AuthenticationResponse refreshToken(iuh.fit.se.dtos.request.RefreshTokenRequest request) {
+        try {
+            // 1. Verify xem Refresh Token còn hạn không
+            var signedJWT = verifyToken(request.getRefreshToken());
+
+            // 2. Lấy thông tin tài khoản từ Token
+            String identifier = signedJWT.getJWTClaimsSet().getSubject();
+            AccountCredential accountCredential = accountCredentialRepository.findByCredential(identifier);
+            if(accountCredential == null) throw new AppException(HttpCode.ACCOUNT_NOT_FOUND);
+
+            User user = accountCredential.getUser();
+
+            // 3. Tạo cặp Token mới
+            String newAccessToken = generateAccessToken(user, accountCredential);
+            String newRefreshToken = generateRefreshToken(user, accountCredential);
+
+            return AuthenticationResponse.builder()
+                    .accessToken(newAccessToken)
+                    .refreshToken(newRefreshToken)
+                    .authenticated(true)
+                    .tokenType(TokenType.BEARER.getTokenType())
+                    .build();
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

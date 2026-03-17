@@ -9,6 +9,7 @@ import iuh.fit.se.entities.User;
 
 public interface AuthenticationService {
     AuthenticationResponse authenticate(AuthenticationRequest request);
+    AuthenticationResponse refreshToken(iuh.fit.se.dtos.request.RefreshTokenRequest request);
     IntrospectResponse introspect(IntrospectRequest request);
     String generateAccessToken(User user, AccountCredential accountCredential);
     String generateRefreshToken(User user, AccountCredential accountCredential);
