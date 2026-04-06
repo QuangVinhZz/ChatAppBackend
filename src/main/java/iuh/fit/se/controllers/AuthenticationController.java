@@ -3,13 +3,8 @@ package iuh.fit.se.controllers;
 import iuh.fit.se.dtos.request.*;
 import iuh.fit.se.dtos.response.ApiResponse;
 import iuh.fit.se.dtos.response.AuthenticationResponse;
-import iuh.fit.se.dtos.response.IntrospectResponse;
-import iuh.fit.se.entities.AccountCredential;
-import iuh.fit.se.entities.User;
 import iuh.fit.se.entities.enums.HttpCode;
-import iuh.fit.se.entities.enums.TokenType;
-import iuh.fit.se.repositories.AccountCredentialRepository;
-import iuh.fit.se.services.authentication.AuthenticationService;
+import iuh.fit.se.services.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("auth-management/api/v1/auth")
@@ -42,6 +35,15 @@ public class AuthenticationController {
                 .code(HttpCode.OK.getCODE())
                 .message("Token refreshed successfully!")
                 .data(authenticationService.refreshToken(request))
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
+                .code(HttpCode.OK.getCODE())
+                .message("Logged out successfully!")
                 .build();
     }
 }

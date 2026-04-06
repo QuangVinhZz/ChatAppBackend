@@ -1,4 +1,4 @@
-package iuh.fit.se.services.authentication;
+package iuh.fit.se.services;
 
 import iuh.fit.se.dtos.request.AuthenticationRequest;
 import iuh.fit.se.dtos.request.IntrospectRequest;
@@ -13,4 +13,5 @@ public interface AuthenticationService {
     IntrospectResponse introspect(IntrospectRequest request);
     String generateAccessToken(User user, AccountCredential accountCredential);
     String generateRefreshToken(User user, AccountCredential accountCredential);
+    void logout(iuh.fit.se.dtos.request.LogoutRequest request);
 }
