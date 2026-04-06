@@ -9,11 +9,7 @@
 
 ## 📨 1.1 Gửi OTP đăng ký
 
-- **URL:** `POST /api/v1/users/send-otp`
-- **Params:**
-
-
-email=example@gmail.com
+URL: POST /api/v1/users/send-otp?email=email_dang_ky_de_nhan_otp_xac_thuc
 ✅ Response (200 OK)
 {
   "message": "OTP đã được gửi về email"
