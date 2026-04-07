@@ -2,4 +2,5 @@ package iuh.fit.se.services;
 
 public interface EmailService {
     void sendOtpRegister(String email);
+    void sendOtpForgotPassword(String email);
 }

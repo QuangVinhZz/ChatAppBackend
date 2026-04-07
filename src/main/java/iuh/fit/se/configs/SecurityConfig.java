@@ -8,8 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,14 +17,14 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    CustomJwtDecoder customJwtDecoder;
+    private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] POST_PUBLIC_ENDPOINT = {
             "/auth-management/api/v1/auth/log-in",
             "/auth-management/api/v1/auth/refresh",
             "/auth-management/api/v1/auth/logout",
             "/api/v1/users/register",
-            "/api/v1/users/send-otp"
+            "/api/v1/users/send-otp" 
     };
 
     private final String[] GET_PUBLIC_ENDPOINT = {
@@ -38,16 +36,17 @@ public class SecurityConfig {
         // CORS
         httpSecurity.cors(cors -> cors.configurationSource(request -> {
             var corConfig = new CorsConfiguration();
-            corConfig.addAllowedOrigin("http://localhost:5173");
+            corConfig.addAllowedOrigin("*");
+            corConfig.addAllowedOrigin("http://192.168.1.34:3000");
             corConfig.addAllowedHeader("*");
             corConfig.addAllowedMethod("*");
-            corConfig.setAllowCredentials(true);
+            corConfig.setAllowCredentials(false);
             return corConfig;
         })).csrf(AbstractHttpConfigurer::disable);
 
         httpSecurity.authorizeHttpRequests(request -> {
             request.requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINT).permitAll()
-                    .requestMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINT).permitAll()
+                    .requestMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINT).permitAll() // Thêm dòng này để cho phép GET ảnh
                     .anyRequest().authenticated();
         }).oauth2ResourceServer(oauth2 -> {
             oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
@@ -67,10 +66,5 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
