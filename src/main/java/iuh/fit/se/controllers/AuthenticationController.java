@@ -1,0 +1,50 @@
+package iuh.fit.se.controllers;
+
+import iuh.fit.se.dtos.request.*;
+import iuh.fit.se.dtos.response.ApiResponse;
+import iuh.fit.se.dtos.response.AuthenticationResponse;
+import iuh.fit.se.entities.enums.HttpCode;
+import iuh.fit.se.services.AuthenticationService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/auth-management/api/v1/auth")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
+public class AuthenticationController {
+
+    AuthenticationService authenticationService;
+
+    @PostMapping("/log-in")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code(HttpCode.OK.getCODE())
+                .message(HttpCode.OK.getMESSAGE())
+                .data(authenticationService.authenticate(request))
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code(HttpCode.OK.getCODE())
+                .message("Token refreshed successfully!")
+                .data(authenticationService.refreshToken(request))
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
+                .code(HttpCode.OK.getCODE())
+                .message("Logged out successfully!")
+                .build();
+    }
+}
