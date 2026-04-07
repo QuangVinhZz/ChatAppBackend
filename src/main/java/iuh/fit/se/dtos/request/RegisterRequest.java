@@ -25,6 +25,12 @@ public class RegisterRequest {
     @NotBlank(message = "Confirm password is required")
     String confirmPassword;
 
+    String phoneNumber;
+    String address;
+    String bio;
+    String gender;
+    String dateOfBirth;
+}
     @NotBlank(message = "OTP is required")
     String otp;
 }
