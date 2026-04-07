@@ -1,4 +1,4 @@
-package iuh.fit.se.services.authentication.impl;
+package iuh.fit.se.services.impl;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -10,6 +10,7 @@ import iuh.fit.se.dtos.request.IntrospectRequest;
 import iuh.fit.se.dtos.response.AuthenticationResponse;
 import iuh.fit.se.dtos.response.IntrospectResponse;
 import iuh.fit.se.entities.AccountCredential;
+import iuh.fit.se.entities.InvalidatedToken;
 import iuh.fit.se.entities.User;
 import iuh.fit.se.entities.enums.HttpCode;
 import iuh.fit.se.entities.enums.TokenType;
@@ -17,9 +18,10 @@ import iuh.fit.se.exceptions.AppException;
 import iuh.fit.se.mapper.AccountMapper;
 import iuh.fit.se.mapper.UserMapper;
 import iuh.fit.se.repositories.AccountCredentialRepository;
+import iuh.fit.se.repositories.InvalidatedTokenRepository;
 import iuh.fit.se.repositories.RoleRepository;
 import iuh.fit.se.repositories.UserRepository;
-import iuh.fit.se.services.authentication.AuthenticationService;
+import iuh.fit.se.services.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -46,6 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.secret-key}")
@@ -139,13 +142,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             if(!(verified && expiryTime.after(new Date())))
                 throw new AppException(HttpCode.UNAUTHENTICATED);
-//            if(redisService.isTokenInvalidated(signedJWT.getJWTClaimsSet().getJWTID()))
-//                throw new AppException(HttpCode.UNAUTHENTICATED);
+
+            // BỔ SUNG ĐOẠN NÀY: KIỂM TRA XEM TOKEN CÓ NẰM TRONG BLACKLIST KHÔNG
+            if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+                throw new AppException(HttpCode.UNAUTHENTICATED);
+
             return signedJWT;
         } catch (JOSEException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
+
     private String buildScope(User user){
         StringJoiner roles = new StringJoiner(" ");
         if(!CollectionUtils.isEmpty(user.getRoles()))
@@ -179,6 +186,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         } catch (ParseException e) {
             throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void logout(iuh.fit.se.dtos.request.LogoutRequest request) {
+        try {
+            // Parse token để lấy thông tin bên trong (không cần verify chữ ký vì đằng nào cũng hủy)
+            var signToken = SignedJWT.parse(request.getToken());
+
+            String jit = signToken.getJWTClaimsSet().getJWTID();
+            Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+
+            // Lưu ID của token vào danh sách đen
+            InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                    .id(jit)
+                    .expiryTime(expiryTime)
+                    .build();
+
+            invalidatedTokenRepository.save(invalidatedToken);
+        } catch (ParseException e) {
+            throw new RuntimeException("Invalid token format");
         }
     }
 }

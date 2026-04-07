@@ -1,12 +1,11 @@
 package iuh.fit.se.configs;
 
-import com.nimbusds.jwt.SignedJWT;
 import iuh.fit.se.dtos.request.IntrospectRequest;
 import iuh.fit.se.dtos.response.IntrospectResponse;
 import iuh.fit.se.entities.enums.HttpCode;
 import iuh.fit.se.exceptions.AppException;
 
-import iuh.fit.se.services.authentication.AuthenticationService;
+import iuh.fit.se.services.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

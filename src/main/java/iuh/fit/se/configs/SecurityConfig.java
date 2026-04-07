@@ -19,13 +19,18 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    // CustomJwtDecoder customJwtDecoder;
+    private final CustomJwtDecoder customJwtDecoder;
 
     private final String[] POST_PUBLIC_ENDPOINT = {
             "/auth-management/api/v1/auth/log-in",
             "/auth-management/api/v1/auth/refresh",
             "/auth-management/api/v1/auth/logout",
-            "/api/v1/**"  // Temporarily allow all APIs
+            "/api/v1/users/register",
+            "/api/v1/users/send-otp" 
+    };
+
+    private final String[] GET_PUBLIC_ENDPOINT = {
+            "/avatars/**"
     };
 
     @Bean
@@ -42,16 +47,14 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(request -> {
             request.requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINT).permitAll()
-                    .anyRequest().permitAll();  // Temporarily allow all
+                    .requestMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINT).permitAll() // Thêm dòng này để cho phép GET ảnh
+                    .anyRequest().authenticated();
+        }).oauth2ResourceServer(oauth2 -> {
+            oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
+                            .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                    .authenticationEntryPoint(new JwtAuthenticationEntrypoint())
+                    .accessDeniedHandler(new CustomAccessDeniedHandler());
         });
-        // Disable OAuth2 temporarily
-        // .oauth2ResourceServer(oauth2 -> {
-        //     // oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-        //     //                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-        //     oauth2.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-        //             .authenticationEntryPoint(new JwtAuthenticationEntrypoint())
-        //             .accessDeniedHandler(new CustomAccessDeniedHandler());
-        // });
 
         return httpSecurity.build();
     }
