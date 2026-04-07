@@ -19,12 +19,13 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    CustomJwtDecoder customJwtDecoder;
+    // CustomJwtDecoder customJwtDecoder;
 
     private final String[] POST_PUBLIC_ENDPOINT = {
             "/auth-management/api/v1/auth/log-in",
             "/auth-management/api/v1/auth/refresh",
-            "/auth-management/api/v1/auth/logout"
+            "/auth-management/api/v1/auth/logout",
+            "/api/v1/**"  // Temporarily allow all APIs
     };
 
     @Bean
@@ -41,13 +42,16 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(request -> {
             request.requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINT).permitAll()
-                    .anyRequest().authenticated();
-        }).oauth2ResourceServer(oauth2 -> {
-            oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-                            .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                    .authenticationEntryPoint(new JwtAuthenticationEntrypoint())
-                    .accessDeniedHandler(new CustomAccessDeniedHandler());
+                    .anyRequest().permitAll();  // Temporarily allow all
         });
+        // Disable OAuth2 temporarily
+        // .oauth2ResourceServer(oauth2 -> {
+        //     // oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
+        //     //                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+        //     oauth2.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+        //             .authenticationEntryPoint(new JwtAuthenticationEntrypoint())
+        //             .accessDeniedHandler(new CustomAccessDeniedHandler());
+        // });
 
         return httpSecurity.build();
     }
