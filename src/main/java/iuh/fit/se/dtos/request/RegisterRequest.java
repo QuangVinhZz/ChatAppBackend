@@ -12,12 +12,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterRequest {
-
-    @NotBlank(message = "First name is required")
-    String firstName;
-
-    @NotBlank(message = "Last name is required")
-    String lastName;
+    @NotBlank(message = "Full name is required")
+    String fullName;
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
@@ -34,4 +30,7 @@ public class RegisterRequest {
     String bio;
     String gender;
     String dateOfBirth;
+}
+    @NotBlank(message = "OTP is required")
+    String otp;
 }

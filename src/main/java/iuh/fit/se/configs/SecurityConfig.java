@@ -24,7 +24,13 @@ public class SecurityConfig {
     private final String[] POST_PUBLIC_ENDPOINT = {
             "/auth-management/api/v1/auth/log-in",
             "/auth-management/api/v1/auth/refresh",
-            "/auth-management/api/v1/auth/logout"
+            "/auth-management/api/v1/auth/logout",
+            "/api/v1/users/register",
+            "/api/v1/users/send-otp"
+    };
+
+    private final String[] GET_PUBLIC_ENDPOINT = {
+            "/avatars/**"
     };
 
     @Bean
@@ -41,6 +47,7 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(request -> {
             request.requestMatchers(HttpMethod.POST, POST_PUBLIC_ENDPOINT).permitAll()
+                    .requestMatchers(HttpMethod.GET, GET_PUBLIC_ENDPOINT).permitAll()
                     .anyRequest().authenticated();
         }).oauth2ResourceServer(oauth2 -> {
             oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)

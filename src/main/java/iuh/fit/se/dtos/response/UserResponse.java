@@ -20,6 +20,10 @@ public class UserResponse {
     String email;
     String phoneNumber;
     String address;
+    String bio;
+    String avatarUrl;
+    String gender;
+    java.time.LocalDate dateOfBirth;
     Set<AccountCredentialResponse> accounts;
     Set<Role> roles;
     Boolean isVerified;

@@ -50,44 +50,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(RegisterRequest request) {
-        // 1. Kiểm tra password match
+        // 1. Kiểm tra OTP
+        Otp otpEntity = otpRepository.findTopByEmailOrderByExpiryTimeDesc(request.getEmail())
+                .orElseThrow(() -> new AppException(HttpCode.BAD_REQUEST)); // Nên tự tạo mã OTP_NOT_FOUND
+
+        if (!otpEntity.getOtpCode().equals(request.getOtp())) {
+            throw new AppException(HttpCode.BAD_REQUEST); // Nên tự tạo mã OTP_INCORRECT
+        }
+
+        if (otpEntity.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AppException(HttpCode.BAD_REQUEST); // Nên tự tạo mã OTP_EXPIRED
+        }
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new AppException(HttpCode.PASSWORD_NOMATCH);
         }
 
-        // 2. Kiểm tra email đã tồn tại
         if (userRepository.findUserByEmail(request.getEmail()) != null ||
                 accountCredentialRepository.findByCredential(request.getEmail()) != null) {
             throw new AppException(HttpCode.EMAIL_EXISTED);
         }
 
-        // 3. Lấy role CUSTOMER
+        String fullName = request.getFullName().trim();
+        String firstName = fullName;
+        String lastName = "";
+        int firstSpaceIndex = fullName.indexOf(" ");
+        if (firstSpaceIndex > 0) {
+            lastName = fullName.substring(0, firstSpaceIndex).trim();
+            firstName = fullName.substring(firstSpaceIndex + 1).trim();
+        }
+
         Role userRole = roleRepository.findById("CUSTOMER")
                 .orElseThrow(() -> new AppException(HttpCode.ROLE_NOT_FOUND));
 
-        // 4. Tạo user với đầy đủ thông tin đăng ký
-        User.UserBuilder userBuilder = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+        User newUser = User.builder()
+                .firstName(firstName)
+                .lastName(lastName)
                 .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
-                .address(request.getAddress())
-                .bio(request.getBio())
-                .gender(request.getGender())
-                .roles(Set.of(userRole));
-
-        if (request.getDateOfBirth() != null && !request.getDateOfBirth().isBlank()) {
-            try {
-                userBuilder.dateOfBirth(LocalDate.parse(request.getDateOfBirth()));
-            } catch (DateTimeParseException e) {
-                throw new AppException(HttpCode.BAD_REQUEST);
-            }
-        }
-
-        User newUser = userBuilder.build();
+                .roles(Set.of(userRole))
+                .build();
         userRepository.save(newUser);
 
-        // 6. Tạo account credential
         AccountCredential account = AccountCredential.builder()
                 .credential(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -96,6 +98,8 @@ public class UserServiceImpl implements UserService {
                 .isVerified(true)
                 .build();
         accountCredentialRepository.save(account);
+        // 3. Xóa OTP sau khi dùng thành công
+        otpRepository.delete(otpEntity);
     }
 
     @Override
