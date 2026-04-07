@@ -43,9 +43,9 @@ public class CustomJwtDecoder implements JwtDecoder {
         IntrospectResponse introspectResponse = authenticationService.introspect(introspectRequest);
         if(!introspectResponse.isValid())
             throw new AppException(HttpCode.UNAUTHENTICATED);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(), "HS512");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SECRET_KEY.getBytes(), "HS256");
         nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
+                .macAlgorithm(MacAlgorithm.HS256)
                 .build();
         return nimbusJwtDecoder.decode(token);
     }

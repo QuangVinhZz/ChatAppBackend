@@ -190,4 +190,37 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Could not store file " + file.getOriginalFilename() + ". Please try again!", e);
         }
     }
+
+    @Override
+    public void resetPassword(String email, String otp, String newPassword) {
+        // 1. Verify OTP
+        Otp otpEntity = otpRepository.findByEmailAndOtpCode(email, otp);
+        if (otpEntity == null) {
+            throw new AppException(HttpCode.BAD_REQUEST);
+        }
+
+        // 2. Check if OTP is expired
+        if (otpEntity.getExpiryTime().isBefore(LocalDateTime.now())) {
+            otpRepository.delete(otpEntity);
+            throw new AppException(HttpCode.BAD_REQUEST);
+        }
+
+        // 3. Find user by email
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            throw new AppException(HttpCode.USER_NOT_FOUND);
+        }
+
+        // 4. Update password
+        AccountCredential credential = accountCredentialRepository.findByUser(user);
+        if (credential == null) {
+            throw new AppException(HttpCode.USER_NOT_FOUND);
+        }
+
+        credential.setPassword(passwordEncoder.encode(newPassword));
+        accountCredentialRepository.save(credential);
+
+        // 5. Delete used OTP
+        otpRepository.delete(otpEntity);
+    }
 }

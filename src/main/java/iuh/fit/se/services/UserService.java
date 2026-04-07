@@ -10,4 +10,5 @@ public interface UserService {
     void changePassword(String email, ChangePasswordRequest request);
     UserResponse updateProfile(String email, iuh.fit.se.dtos.request.UpdateProfileRequest request);
     UserResponse updateAvatar(String email, org.springframework.web.multipart.MultipartFile file);
+    void resetPassword(String email, String otp, String newPassword);
 }

@@ -122,7 +122,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private String signToken(JWTClaimsSet claimsSet){
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         Payload payload = new Payload(claimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header, payload);
         try {

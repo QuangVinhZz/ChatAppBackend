@@ -1,6 +1,7 @@
 package iuh.fit.se.repositories;
 
 import iuh.fit.se.entities.AccountCredential;
+import iuh.fit.se.entities.User;
 import iuh.fit.se.entities.enums.AccountType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,6 @@ public interface AccountCredentialRepository extends JpaRepository<AccountCreden
     AccountCredential findByUserIdAndAccountType(
             @Param("userId") String userId,
             @Param("accountType") AccountType accountType);
+    
+    AccountCredential findByUser(User user);
 }

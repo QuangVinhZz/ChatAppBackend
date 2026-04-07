@@ -62,4 +62,43 @@ public class EmailServiceImpl implements EmailService {
             throw new AppException(HttpCode.BAD_REQUEST);
         }
     }
+
+    @Override
+    public void sendOtpForgotPassword(String email) {
+        // 1. Sinh mã OTP 6 số ngẫu nhiên
+        String otpCode = String.format("%06d", new Random().nextInt(999999));
+
+        // 2. Lưu thông tin OTP vào Database với thời hạn 5 phút
+        Otp otp = Otp.builder()
+                .email(email)
+                .otpCode(otpCode)
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .build();
+        otpRepository.save(otp);
+
+        // 3. Chuẩn bị nội dung Email
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("[ChatApp] Mã xác minh quên mật khẩu");
+
+        String mailContent = "Chào bạn,\n\n"
+                + "Bạn đang yêu cầu cập nhật lại mật khẩu trên ChatApp.\n"
+                + "Mã xác minh (OTP) của bạn là: " + otpCode + "\n\n"
+                + "Mã này có hiệu lực trong vòng 5 phút.\n"
+                + "Vui lòng không chia sẻ mã này cho bất kỳ ai.\n\n"
+                + "Trân trọng,\n"
+                + "Đội ngũ ChatApp Backend.";
+        message.setText(mailContent);
+
+        // 4. Thực hiện gửi mail
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            // In ra log để dễ debug nếu gửi mail thất bại (sai pass, sai cấu hình port,...)
+            System.err.println("Lỗi gửi email đến " + email + ": " + e.getMessage());
+
+            // Ném lỗi để báo về cho Client biết
+            throw new AppException(HttpCode.BAD_REQUEST);
+        }
+    }
 }
